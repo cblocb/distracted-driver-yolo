@@ -1,30 +1,25 @@
 # distracted-driver-yolo
 
-this was a computer vision class project on distracted-driver classification using the state farm in-cabin dataset
+distracted driver classification project from computer vision
 
-i simplified the original 10-class setup into a binary classification problem:
+i took the state farm in-cabin distracted-driver dataset and collapsed the original 10 classes into a binary problem:
 
-- `focused`
-- `distracted`
+- focused
+- distracted
 
-the repo includes:
+the main point was to build the whole pipeline myself instead of just training a model once and calling it done
 
-- `project2train.py` for dataset splitting + training
-- `project2validate.py` for validation metrics / confusion matrix output
-- `project2_report.pdf` for the submitted report
-- a few report figures
+so this has:
 
-what i was trying to do:
+- the dataset split / setup logic
+- the yolov11 training script
+- the validation / confusion-matrix script
+- the final submitted report pdf
 
-- create a persistent train/validation split by subject
-- train a small yolov11 classification model on the binary task
-- evaluate it with accuracy, precision, recall, f1, and qualitative review of validation examples
+it ended up working pretty well on the binary version of the task
 
-final result from the report:
+from the report it got about 95.1% validation accuracy with weighted f1 around 0.948
 
-- about `95.1%` validation accuracy
-- weighted f1 around `0.948`
+the class imbalance mattered a lot though, so accuracy by itself was kind of flattering and the focused class was definitely weaker than the distracted class
 
-the more important point than raw accuracy was that the binary task worked pretty well, but the model was stronger on the distracted class than the focused class because the data was pretty imbalanced.
-
-the dataset itself and model weights are not included here, so if you want to run this end to end you would need to point the paths in the scripts at your local copy of the dataset.
+the dataset and weights arent in this repo, so if you want to actually run it youd need to point the paths at your own local copy

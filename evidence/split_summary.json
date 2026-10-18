@@ -1,0 +1,32 @@
+{
+  "val_subjects": [
+    "p035",
+    "p042",
+    "p050",
+    "p056",
+    "p081"
+  ],
+  "num_images": 22424,
+  "original_class_counts": {
+    "c0": 2489,
+    "c1": 2267,
+    "c2": 2317,
+    "c3": 2346,
+    "c4": 2326,
+    "c5": 2312,
+    "c6": 2325,
+    "c7": 2002,
+    "c8": 1911,
+    "c9": 2129
+  },
+  "binary_split_counts": {
+    "train": {
+      "focused": 2032,
+      "distracted": 16546
+    },
+    "val": {
+      "focused": 457,
+      "distracted": 3389
+    }
+  }
+}

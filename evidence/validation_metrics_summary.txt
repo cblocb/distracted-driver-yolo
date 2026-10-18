@@ -1,0 +1,9 @@
+Accuracy: 0.951378
+Majority class baseline accuracy: 0.881175
+focused: precision=0.894737 recall=0.669584 f1=0.765957 support=457
+distracted: precision=0.956906 recall=0.989377 f1=0.972871 support=3389
+Macro F1: 0.869414
+Weighted F1: 0.948285
+Confusion matrix (rows=true, cols=pred) [focused, distracted]:
+306, 151
+36, 3353

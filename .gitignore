@@ -1,2 +1,8 @@
 __pycache__/
 .ipynb_checkpoints/
+
+binary_dataset/
+runs/
+state-farm-distracted-driver-detection/
+*.pt
+*.extracted.txt

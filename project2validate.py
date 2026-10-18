@@ -1,10 +1,8 @@
+import argparse
 import os
 
-from ultralytics import YOLO
-
-
-VAL_ROOT = "/Users/caleb/git/toys/cv/project2/binary_dataset/val"
-RUN_ROOT = "/Users/caleb/git/toys/cv/project2/runs/level1_binary"
+VAL_ROOT = "binary_dataset/val"
+RUN_ROOT = "runs/level1_binary"
 MODEL_PATH = os.path.join(RUN_ROOT, "weights", "best.pt")
 OUT_PATH = os.path.join(RUN_ROOT, "validation_metrics_summary.txt")
 
@@ -26,6 +24,10 @@ def load_val_images():
 
 
 def get_metrics(true_labels, pred_labels):
+    if len(true_labels) != len(pred_labels) or not len(true_labels):
+        raise ValueError("Nonempty, equally sized true/predicted label lists are required")
+    if any(x not in {"focused", "distracted"} for x in list(true_labels) + list(pred_labels)):
+        raise ValueError("Labels must be focused or distracted")
     matrix = {
         "focused": {"focused": 0, "distracted": 0},
         "distracted": {"focused": 0, "distracted": 0},
@@ -45,9 +47,9 @@ def get_metrics(true_labels, pred_labels):
                 fp += matrix[other_label][label]
                 fn += matrix[label][other_label]
 
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
-        f1 = 2 * precision * recall / (precision + recall)
+        precision = tp / (tp + fp) if tp + fp else 0.0
+        recall = tp / (tp + fn) if tp + fn else 0.0
+        f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
         support = matrix[label]["focused"] + matrix[label]["distracted"]
 
         results[label] = {
@@ -72,6 +74,18 @@ def get_metrics(true_labels, pred_labels):
 
 
 def main():
+    global VAL_ROOT, MODEL_PATH, OUT_PATH
+    parser = argparse.ArgumentParser(description="Evaluate binary driver classification")
+    parser.add_argument("--data", required=True, help="Validation directory containing focused/ and distracted/")
+    parser.add_argument("--weights", required=True)
+    parser.add_argument("--output", default="validation_metrics_summary.txt", help="New result file; existing files are refused")
+    parser.add_argument("--device", default="cpu")
+    args = parser.parse_args()
+    VAL_ROOT, MODEL_PATH, OUT_PATH = args.data, args.weights, args.output
+    if os.path.exists(OUT_PATH):
+        parser.error("Output already exists; choose a new --output")
+    from ultralytics import YOLO
+
     image_paths, true_labels = load_val_images()
 
     model = YOLO(MODEL_PATH)
@@ -79,7 +93,7 @@ def main():
         source=image_paths,
         imgsz=IMAGE_SIZE,
         batch=BATCH_SIZE,
-        device="mps",
+        device=args.device,
         verbose=False,
     )
 
@@ -108,7 +122,7 @@ def main():
     lines.append(f"{matrix['focused']['focused']}, {matrix['focused']['distracted']}")
     lines.append(f"{matrix['distracted']['focused']}, {matrix['distracted']['distracted']}")
 
-    with open(OUT_PATH, "w") as file:
+    with open(OUT_PATH, "x") as file:
         file.write("\n".join(lines) + "\n")
 
     print("\n".join(lines))
